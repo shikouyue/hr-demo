@@ -69,13 +69,14 @@
 
 <script>
 import { getRequiredRules } from '@/utils/validate'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
   data() {
     return {
       loginForm: {
-        mobile: '17300000002',
+        mobile: '13800000002',
         password: '123456'
       },
       loginRules: {
@@ -111,6 +112,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -121,24 +123,36 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    async handleLogin() {
+      this.loading = true
+      try {
+        await this.$refs.loginForm.validate()
+        await this.login(this.loginForm)
+        this.$router.push({ path: '/' })
+        // console.log(this)
+      } catch (error) {
+        console.dir(error)
+      } finally {
+        this.loading = false
+      }
+
+      // this.$refs.loginForm.validate((valid) => {
+      //   if (valid) {
+      //     this.loading = true
+      //     this.$store
+      //       .dispatch('user/login', this.loginForm)
+      //       .then(() => {
+      //         this.$router.push({ path: this.redirect || '/' })
+      //         this.loading = false
+      //       })
+      //       .catch(() => {
+      //         this.loading = false
+      //       })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     }
   }
 }
