@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import state from '../store'
 import router from '@/router'
 import { getTimeStamp } from './auth'
 import store from '../store'
@@ -25,7 +24,7 @@ service.interceptors.request.use(
         return Promise.reject(new Error('token超时了'))
       }
     }
-    const token = state.getters.token
+    const token = store.getters.token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
